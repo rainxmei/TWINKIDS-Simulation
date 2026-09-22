@@ -1,0 +1,42 @@
+{
+  "experiment": "full_data_100_epoch_trainset_evaluation",
+  "epochs": 100,
+  "batch_size": 32,
+  "learning_rate": 0.001,
+  "dropout": 0.5,
+  "weight_decay": 0.0005,
+  "focal_gamma": 2.0,
+  "class_weights_alpha": {
+    "normal": 0.45130982995033264,
+    "crackle": 0.6935318112373352,
+    "wheeze": 1.8551584482192993
+  },
+  "seed": 42,
+  "use_augmentation": true,
+  "target_frames": 287,
+  "in_channels": 80,
+  "class_order": [
+    "normal",
+    "crackle",
+    "wheeze"
+  ],
+  "n_segments": 6898,
+  "n_recordings": 920,
+  "n_patients": 126,
+  "class_distribution": {
+    "normal": 3642,
+    "crackle": 2370,
+    "wheeze": 886
+  },
+  "equipment_distribution": {
+    "AKGC417L": 4346,
+    "Meditron": 1456,
+    "LittC2SE": 594,
+    "Litt3200": 502
+  },
+  "trainable_parameters": 130819,
+  "total_parameters": 130819,
+  "training_seconds": 489.14474272727966,
+  "checkpoint_size_mb": 0.5174398422241211,
+  "evaluation_protocol": "same full dataset used for training; no holdout"
+}

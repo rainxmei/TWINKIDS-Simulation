@@ -1,0 +1,230 @@
+[
+  {
+    "id": "normal_01",
+    "label": "normal",
+    "confidence": 45.2,
+    "probabilities": {
+      "normal": 45.2,
+      "crackle": 30.1,
+      "wheeze": 24.6
+    },
+    "rr": 22.7,
+    "duration": 4.368,
+    "audio": "assets/lung_samples/audio/normal_01.wav",
+    "gradcam": "assets/lung_samples/gradcam/normal_01.png",
+    "source_recording": "104_1b1_Al_sc_Litt3200",
+    "annotation_cycle": 5,
+    "annotation_start": 8.25,
+    "annotation_end": 12.618,
+    "model_predicted": "normal"
+  },
+  {
+    "id": "normal_02",
+    "label": "normal",
+    "confidence": 38.8,
+    "probabilities": {
+      "normal": 38.8,
+      "crackle": 31.1,
+      "wheeze": 30.1
+    },
+    "rr": 26.4,
+    "duration": 2.666,
+    "audio": "assets/lung_samples/audio/normal_02.wav",
+    "gradcam": "assets/lung_samples/gradcam/normal_02.png",
+    "source_recording": "107_2b3_Tc_mc_AKGC417L",
+    "annotation_cycle": 5,
+    "annotation_start": 10.53,
+    "annotation_end": 13.196,
+    "model_predicted": "normal"
+  },
+  {
+    "id": "normal_03",
+    "label": "normal",
+    "confidence": 38.6,
+    "probabilities": {
+      "normal": 38.6,
+      "crackle": 28.2,
+      "wheeze": 33.2
+    },
+    "rr": 22.9,
+    "duration": 2.57,
+    "audio": "assets/lung_samples/audio/normal_03.wav",
+    "gradcam": "assets/lung_samples/gradcam/normal_03.png",
+    "source_recording": "112_1b1_Lr_sc_Meditron",
+    "annotation_cycle": 6,
+    "annotation_start": 16.464,
+    "annotation_end": 19.034,
+    "model_predicted": "normal"
+  },
+  {
+    "id": "normal_04",
+    "label": "normal",
+    "confidence": 38.5,
+    "probabilities": {
+      "normal": 38.5,
+      "crackle": 35.8,
+      "wheeze": 25.6
+    },
+    "rr": 32.8,
+    "duration": 3.128,
+    "audio": "assets/lung_samples/audio/normal_04.wav",
+    "gradcam": "assets/lung_samples/gradcam/normal_04.png",
+    "source_recording": "104_1b1_Ar_sc_Litt3200",
+    "annotation_cycle": 11,
+    "annotation_start": 19.048,
+    "annotation_end": 22.176,
+    "model_predicted": "normal"
+  },
+  {
+    "id": "crackle_05",
+    "label": "crackle",
+    "confidence": 39.5,
+    "probabilities": {
+      "normal": 23.4,
+      "crackle": 39.5,
+      "wheeze": 37.1
+    },
+    "rr": 26.4,
+    "duration": 2.596,
+    "audio": "assets/lung_samples/audio/crackle_05.wav",
+    "gradcam": "assets/lung_samples/gradcam/crackle_05.png",
+    "source_recording": "107_2b3_Al_mc_AKGC417L",
+    "annotation_cycle": 3,
+    "annotation_start": 5.327,
+    "annotation_end": 7.923,
+    "model_predicted": "crackle"
+  },
+  {
+    "id": "crackle_06",
+    "label": "crackle",
+    "confidence": 37.1,
+    "probabilities": {
+      "normal": 33.9,
+      "crackle": 37.1,
+      "wheeze": 29.0
+    },
+    "rr": 23.9,
+    "duration": 1.567,
+    "audio": "assets/lung_samples/audio/crackle_06.wav",
+    "gradcam": "assets/lung_samples/gradcam/crackle_06.png",
+    "source_recording": "104_1b1_Ll_sc_Litt3200",
+    "annotation_cycle": 5,
+    "annotation_start": 8.829,
+    "annotation_end": 10.396,
+    "model_predicted": "crackle"
+  },
+  {
+    "id": "crackle_07",
+    "label": "crackle",
+    "confidence": 36.2,
+    "probabilities": {
+      "normal": 28.2,
+      "crackle": 36.2,
+      "wheeze": 35.6
+    },
+    "rr": 25.9,
+    "duration": 2.726,
+    "audio": "assets/lung_samples/audio/crackle_07.wav",
+    "gradcam": "assets/lung_samples/gradcam/crackle_07.png",
+    "source_recording": "107_2b4_Al_mc_AKGC417L",
+    "annotation_cycle": 6,
+    "annotation_start": 13.292,
+    "annotation_end": 16.018,
+    "model_predicted": "crackle"
+  },
+  {
+    "id": "crackle_08",
+    "label": "crackle",
+    "confidence": 36.9,
+    "probabilities": {
+      "normal": 26.9,
+      "crackle": 36.9,
+      "wheeze": 36.3
+    },
+    "rr": 26.4,
+    "duration": 2.369,
+    "audio": "assets/lung_samples/audio/crackle_08.wav",
+    "gradcam": "assets/lung_samples/gradcam/crackle_08.png",
+    "source_recording": "107_2b3_Al_mc_AKGC417L",
+    "annotation_cycle": 6,
+    "annotation_start": 13.196,
+    "annotation_end": 15.565,
+    "model_predicted": "crackle"
+  },
+  {
+    "id": "wheeze_09",
+    "label": "wheeze",
+    "confidence": 58.3,
+    "probabilities": {
+      "normal": 19.1,
+      "crackle": 22.6,
+      "wheeze": 58.3
+    },
+    "rr": 18.4,
+    "duration": 4.543,
+    "audio": "assets/lung_samples/audio/wheeze_09.wav",
+    "gradcam": "assets/lung_samples/gradcam/wheeze_09.png",
+    "source_recording": "103_2b2_Ar_mc_LittC2SE",
+    "annotation_cycle": 3,
+    "annotation_start": 6.636,
+    "annotation_end": 11.179,
+    "model_predicted": "wheeze"
+  },
+  {
+    "id": "wheeze_10",
+    "label": "wheeze",
+    "confidence": 53.0,
+    "probabilities": {
+      "normal": 18.0,
+      "crackle": 29.0,
+      "wheeze": 53.0
+    },
+    "rr": 27.1,
+    "duration": 2.514,
+    "audio": "assets/lung_samples/audio/wheeze_10.wav",
+    "gradcam": "assets/lung_samples/gradcam/wheeze_10.png",
+    "source_recording": "106_2b1_Pr_mc_LittC2SE",
+    "annotation_cycle": 4,
+    "annotation_start": 7.093,
+    "annotation_end": 9.607,
+    "model_predicted": "wheeze"
+  },
+  {
+    "id": "wheeze_11",
+    "label": "wheeze",
+    "confidence": 43.6,
+    "probabilities": {
+      "normal": 29.3,
+      "crackle": 27.1,
+      "wheeze": 43.6
+    },
+    "rr": 22.9,
+    "duration": 2.478,
+    "audio": "assets/lung_samples/audio/wheeze_11.wav",
+    "gradcam": "assets/lung_samples/gradcam/wheeze_11.png",
+    "source_recording": "112_1b1_Lr_sc_Meditron",
+    "annotation_cycle": 11,
+    "annotation_start": 29.235,
+    "annotation_end": 31.713,
+    "model_predicted": "wheeze"
+  },
+  {
+    "id": "wheeze_12",
+    "label": "wheeze",
+    "confidence": 41.6,
+    "probabilities": {
+      "normal": 24.5,
+      "crackle": 34.0,
+      "wheeze": 41.6
+    },
+    "rr": 14.6,
+    "duration": 4.177,
+    "audio": "assets/lung_samples/audio/wheeze_12.wav",
+    "gradcam": "assets/lung_samples/gradcam/wheeze_12.png",
+    "source_recording": "110_1p1_Ll_sc_Meditron",
+    "annotation_cycle": 5,
+    "annotation_start": 19.678,
+    "annotation_end": 23.855,
+    "model_predicted": "wheeze"
+  }
+]
