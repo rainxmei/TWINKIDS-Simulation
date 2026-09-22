@@ -83,11 +83,16 @@
   };
 
   /* ---------------- history (localStorage) ---------------- */
-  const HKEY = "stethokid_history_v2";
+  const HKEY = "twinkids_history_v2";
+  const LEGACY_HKEY = "stethokid_history_v2";
   function loadHistory(){
     try{
-      const raw = localStorage.getItem(HKEY);
-      if(raw) return JSON.parse(raw);
+      const raw = localStorage.getItem(HKEY) || localStorage.getItem(LEGACY_HKEY);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        if(!localStorage.getItem(HKEY)) localStorage.setItem(HKEY, raw);
+        return parsed;
+      }
     }catch(e){}
     return [
       { name:"Ishwari Adiningrum", id:"RM-2026-1003", riskType:"mid", tier:"mid", spo2:94, hr:108, when:"6 Sep 2026, 22:10" },
@@ -290,7 +295,7 @@
     if(!note) return;
     const invalid = !Number.isFinite(totalMonths) || totalMonths < 0 || totalMonths > 59;
     note.hidden = !invalid;
-    note.textContent = "StethoKid ditujukan untuk anak usia 0–59 bulan (maksimal 4 tahun 11 bulan).";
+    note.textContent = "Twinkids ditujukan untuk anak usia 0–59 bulan (maksimal 4 tahun 11 bulan).";
   }
 
   function validatePatientForm(){
@@ -446,7 +451,7 @@
       $("#activePointLabel").textContent = "Menunggu perangkat mulai merekam…";
       renderPointList(-1, "waiting");
     }
-    setTimerDisplay(0, "00:00 / 00:02");
+    setTimerDisplay(0, "00:00 / 00:09");
   }
 
   let phoneAusTimer = null;
@@ -480,7 +485,7 @@
     state.points[index] = { id:index+1, name, result, confidence, rr, gradcam, audio, sampleId, sourceRecording, annotationCycle, probabilities };
     if(isScreenVisible("proses-auskultasi")){
       renderPointList(index, "waiting");
-      setTimerDisplay(0, "00:00 / 00:02");
+      setTimerDisplay(0, "00:00 / 00:09");
       const doneCount = state.points.filter(Boolean).length;
       $("#activePointLabel").textContent = doneCount>=6
         ? "Tempelkan jari sesuai instruksi di perangkat fisik."
@@ -1000,10 +1005,10 @@
       const result = s.points && s.points[i];
       return `<tr><td>${pt.id}. ${htmlEscape(pt.name)}</td><td>${result ? htmlEscape(RESULT_TAG_LABEL[result.result] || result.result) : "—"}</td></tr>`;
     }).join("");
-    const html = `<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Laporan StethoKid - ${htmlEscape(h.name||"Pasien")}</title><style>
+    const html = `<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Laporan Twinkids - ${htmlEscape(h.name||"Pasien")}</title><style>
       body{font-family:Arial,sans-serif;max-width:760px;margin:32px auto;padding:0 22px;color:#151A18;line-height:1.45}h1{color:#008C9E;margin-bottom:4px}h2{font-size:17px;color:#00626E;margin:24px 0 8px}p.meta{color:#6B746F;margin-top:0}table{width:100%;border-collapse:collapse;margin:8px 0 18px}td,th{border-bottom:1px solid #e5e9e6;padding:8px 6px;text-align:left;font-size:13px}td:first-child{width:52%;color:#3A423F}.risk{font-weight:700;font-size:18px;margin:8px 0 14px}.note{font-size:11px;color:#9AA39D;margin-top:28px}@media print{body{margin:0;max-width:none}.note{page-break-inside:avoid}}
     </style></head><body>
-      <h1>Laporan Pemeriksaan StethoKid</h1><p class="meta">Diperiksa: ${htmlEscape(h.when||"—")}</p>
+      <h1>Laporan Pemeriksaan Twinkids</h1><p class="meta">Diperiksa: ${htmlEscape(h.when||"—")}</p>
       <div class="risk">${htmlEscape(riskLabelFor(h))}</div>
       <h2>Identitas Pasien</h2><table>
         <tr><td>Nama</td><td>${htmlEscape(h.name||"—")}</td></tr>
@@ -1019,13 +1024,13 @@
       </table>
       <h2>Tanda Bahaya</h2><table>${dangerRows}</table>
       <h2>Hasil Auskultasi 6 Titik</h2><table>${pointRows}</table>
-      <p class="note">Laporan ini berasal dari purwarupa StethoKid dan merupakan alat bantu skrining, bukan diagnosis medis. File dapat dibuka di browser lalu dicetak atau disimpan sebagai PDF.</p>
+      <p class="note">Laporan ini berasal dari purwarupa Twinkids dan merupakan alat bantu skrining, bukan diagnosis medis. File dapat dibuka di browser lalu dicetak atau disimpan sebagai PDF.</p>
     </body></html>`;
     const blob = new Blob([html], {type:"text/html;charset=utf-8"});
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `Laporan_StethoKid_${String(h.name||"pasien").replace(/[^a-z0-9_-]+/gi,"_")}.html`;
+    a.download = `Laporan_Twinkids_${String(h.name||"pasien").replace(/[^a-z0-9_-]+/gi,"_")}.html`;
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
@@ -1063,7 +1068,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `Riwayat_StethoKid_${new Date().toISOString().slice(0,10)}.csv`;
+    a.download = `Riwayat_Twinkids_${new Date().toISOString().slice(0,10)}.csv`;
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
     showToast("Riwayat berhasil diexport ke CSV");
@@ -1077,7 +1082,7 @@
     const info = RESULT_TEXT[r.riskType] || RESULT_TEXT.low;
     const actions = `<ol>${info.actions.map(x=>`<li>${x}</li>`).join("")}</ol>`;
     const html = `<!DOCTYPE html><html lang="id"><head><meta charset="utf-8">
-    <title>Laporan Skrining StethoKid, ${p.name||"Pasien"}</title>
+    <title>Laporan Skrining Twinkids, ${p.name||"Pasien"}</title>
     <style>
       body{font-family:Arial,sans-serif; max-width:680px; margin:40px auto; color:#151A18; line-height:1.45;}
       h1{color:#00A3AE; font-size:22px; margin-bottom:2px;}
@@ -1087,7 +1092,7 @@
       h3{font-size:14px; color:#00A3AE; margin:18px 0 8px;} .factor{display:flex; justify-content:space-between; font-size:13px; padding:5px 0; border-bottom:1px dashed #eee;}
       footer{margin-top:26px; font-size:11px; color:#9AA39D; line-height:1.6;}
     </style></head><body>
-      <h1>Laporan Hasil Skrining, StethoKid</h1>
+      <h1>Laporan Hasil Skrining, Twinkids</h1>
       <div class="tag">${info.label}</div>
       <p class="lead">${info.lead}</p>
       <h3>Tindakan yang disarankan</h3>${actions}
@@ -1104,13 +1109,13 @@
       </table>
       <h3>Faktor Kontribusi Utama</h3>
       ${r.factors.map(f=>`<div class="factor"><span>${f.label}</span><span>${f.shapValue>=0?"+":"−"}${Math.abs(f.shapValue).toFixed(3)}</span></div>`).join("")}
-      <footer>Dokumen ini dihasilkan oleh purwarupa StethoKid untuk demonstrasi sistem skrining. Hasil ini merupakan alat bantu skrining dan bukan diagnosis medis. Dibuat: ${new Date().toLocaleString("id-ID")}</footer>
+      <footer>Dokumen ini dihasilkan oleh purwarupa Twinkids untuk demonstrasi sistem skrining. Hasil ini merupakan alat bantu skrining dan bukan diagnosis medis. Dibuat: ${new Date().toLocaleString("id-ID")}</footer>
     </body></html>`;
     const blob = new Blob([html], {type:"text/html"});
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `Laporan_StethoKid_${(p.name||"pasien").replace(/\s+/g,"_")}.html`;
+    a.download = `Laporan_Twinkids_${(p.name||"pasien").replace(/\s+/g,"_")}.html`;
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
     showToast("Laporan berhasil diunduh");

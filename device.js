@@ -12,7 +12,7 @@
     "Posterior Atas Kiri","Posterior Atas Kanan","Posterior Bawah Kiri",
     "Posterior Bawah Kanan","Anterior Atas Kiri","Anterior Atas Kanan"
   ];
-  const REC_SECONDS = 2;         // durasi rekam per titik
+  const REC_SECONDS = 9;         // durasi rekam per titik
   const BAD_SIGNAL_CHANCE = 0.16; // peluang kualitas sinyal rendah per rekaman
   const RESULT_COLORS = { crackle:"#D9364A", wheeze:"#C98A00", normal:"#00A3AE" };
   const RESULT_LABELS = { crackle:"CRACKLE", wheeze:"WHEEZE", normal:"NORMAL" };
@@ -147,7 +147,7 @@
 
     if(!D.phoneReady && D.state === "idle"){
       el.innerHTML = `
-        <div class="dlcd-header"><b>StethoKid</b>${battWifi()}</div>
+        <div class="dlcd-header"><b>Twinkids</b>${battWifi()}</div>
         <div class="dlcd-gate">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
           <b>Menunggu Perangkat</b>
@@ -159,7 +159,7 @@
     if(D.state === "allDone"){
       if(D.maxState === "prompt"){
         el.innerHTML = `
-          <div class="dlcd-header"><b>StethoKid</b>${battWifi()}</div>
+          <div class="dlcd-header"><b>Twinkids</b>${battWifi()}</div>
           <div class="dlcd-max-wrap">
             <div class="dlcd-max-icon">☝</div>
             <b>Tempelkan Jari</b>
@@ -171,7 +171,7 @@
       }
       if(D.maxState === "measuring"){
         el.innerHTML = `
-          <div class="dlcd-header"><b>StethoKid</b>${battWifi()}</div>
+          <div class="dlcd-header"><b>Twinkids</b>${battWifi()}</div>
           <div class="dlcd-max-wrap">
             <div class="dlcd-max-pulse">♥</div>
             <b>MENGUKUR...</b>
@@ -183,7 +183,7 @@
       }
       if(D.maxState === "done"){
         el.innerHTML = `
-          <div class="dlcd-header"><b>StethoKid</b>${battWifi()}</div>
+          <div class="dlcd-header"><b>Twinkids</b>${battWifi()}</div>
           <div class="dlcd-max-result">
             <div><span>SpO₂</span><b>${D.spo2}%</b></div>
             <div><span>HR</span><b>${D.hr} bpm</b></div>
