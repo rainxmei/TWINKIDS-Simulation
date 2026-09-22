@@ -123,9 +123,13 @@
                 </div>
 
 
-                <button class="btn btn-primary" id="btnToDanger" disabled>Kondisi Saat ini
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                </button>
+              </div>
+              <div style="padding:0 18px 18px;">
+                <div class="btn-row">
+                  <button class="btn btn-primary" id="btnToDanger" disabled>Kondisi Saat ini
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                  </button>
+                </div>
               </div>
               <nav class="bottom-nav" data-navbar></nav>
             </section>
@@ -355,9 +359,9 @@
                   </div>
                   <div id="pointResultList" class="point-list point-list-compact"></div>
                   <div class="result-vitals-row result-vitals-row-bottom" aria-live="polite">
-                    <div class="result-vital"><span>RR</span><b id="rrResultValue">—</b><small>x/menit</small></div>
-                    <div class="result-vital"><span>HR</span><b id="hrResultValue">—</b><small>bpm</small></div>
                     <div class="result-vital"><span>SpO₂</span><b id="spo2ResultValue">—</b><small>%</small></div>
+                    <div class="result-vital"><span>HR</span><b id="hrResultValue">—</b><small>bpm</small></div>
+                    <div class="result-vital"><span>RR</span><b id="rrResultValue">—</b><small>x/menit</small></div>
                   </div>
                 </div>
                 <div id="resultActionsWrap"></div>
@@ -392,7 +396,7 @@
                   </div>
                   <div class="spectro-card">
                     <img id="spectroImage" src="assets/lung_samples/gradcam/normal_01.png" alt="Grad-CAM pada mel-spektrogram suara paru" />
-                    <p class="disclaimer">Grad-CAM CNN 1D dioverlay pada mel-spektrogram sampel auskultasi yang dipakai pada sesi ini.</p>
+                    <p class="disclaimer">Grad-CAM 2D CNN dioverlay pada mel-spektrogram sampel auskultasi yang dipakai pada sesi ini.</p>
                   </div>
                   <div class="alert alert-info" style="margin-top:12px;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>

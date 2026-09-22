@@ -315,10 +315,23 @@
     validatePatientForm();
   }
 
+  function birthdateFromAgeMonths(totalMonths){
+    if(!Number.isFinite(totalMonths) || totalMonths < 0) return "";
+    const today = new Date();
+    const targetMonth = new Date(today.getFullYear(), today.getMonth() - totalMonths, 1);
+    const lastDay = new Date(targetMonth.getFullYear(), targetMonth.getMonth() + 1, 0).getDate();
+    targetMonth.setDate(Math.min(today.getDate(), lastDay));
+    const y = targetMonth.getFullYear();
+    const m = String(targetMonth.getMonth() + 1).padStart(2, "0");
+    const d = String(targetMonth.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
   $("#pBirthdate") && $("#pBirthdate").addEventListener("input", ()=>{
     const val = $("#pBirthdate").value;
     if(!val){ state.patient.age = null; updateAgeScopeNote(null); validatePatientForm(); return; }
-    const birth = new Date(val);
+    const [birthYear, birthMonth, birthDay] = val.split("-").map(Number);
+    const birth = new Date(birthYear, birthMonth - 1, birthDay);
     const today = new Date();
     let months = (today.getFullYear()-birth.getFullYear())*12 + (today.getMonth()-birth.getMonth());
     if(today.getDate() < birth.getDate()) months -= 1;
@@ -338,13 +351,14 @@
     const m = parseInt(mRaw, 10);
     if(!yRaw && !mRaw){
       state.patient.age = null;
+      $("#pBirthdate").value = "";
       updateAgeScopeNote(null);
       validatePatientForm();
       return;
     }
     const totalMonths = (Number.isFinite(y) ? y : 0) * 12 + (Number.isFinite(m) ? m : 0);
     state.patient.age = totalMonths;
-    $("#pBirthdate").value = ""; // input manual meng-override tanggal lahir
+    $("#pBirthdate").value = birthdateFromAgeMonths(totalMonths);
     updateAgeScopeNote(totalMonths);
     validatePatientForm();
   }
@@ -457,7 +471,7 @@
   let phoneAusTimer = null;
 
   document.addEventListener("antarakala:point-start", (e)=>{
-    const { index, name, duration } = e.detail;
+    const { index, name, duration, realDurationMs } = e.detail;
     if(!isScreenVisible("proses-auskultasi")) return;
     $("#activePointLabel").textContent = `Titik Aktif: ${index+1}. ${name}`;
     renderPointList(index, "recording");
@@ -465,10 +479,11 @@
     clearInterval(phoneAusTimer);
     phoneAusTimer = setInterval(()=>{
       elapsed += 100;
-      const pct = clamp(elapsed/(duration*1000), 0, 1);
-      const elapsedSec = Math.min(duration, Math.floor(elapsed/1000));
+      const targetMs = Number(realDurationMs) || duration*1000;
+      const pct = clamp(elapsed/targetMs, 0, 1);
+      const elapsedSec = Math.min(duration, Math.floor(pct*duration));
       setTimerDisplay(pct, `${formatMMSS(elapsedSec)} / ${formatMMSS(duration)}`);
-      if(elapsed >= duration*1000) clearInterval(phoneAusTimer);
+      if(elapsed >= targetMs) clearInterval(phoneAusTimer);
     }, 100);
   });
 
@@ -532,7 +547,7 @@
     const el = $("#vTemp");
     const raw = el ? String(el.value).trim().replace(",", ".") : "";
     const val = raw === "" ? NaN : parseFloat(raw);
-    const ok = Number.isFinite(val) && val >= 30 && val <= 45;
+    const ok = Number.isFinite(val);
     if($("#btnToPanduan")) $("#btnToPanduan").disabled = !ok;
     return ok;
   }
@@ -715,7 +730,7 @@
 
     const actionsWrap = $("#resultActionsWrap");
     if(actionsWrap){
-      actionsWrap.innerHTML = `<div class="card"><div class="card-title" style="margin-bottom:10px;">Tindakan yang Disarankan</div><ol class="result-actions-list">${info.actions.map(x=>`<li>${x}</li>`).join("")}</ol></div>`;
+      actionsWrap.innerHTML = `<div class="card"><div class="card-title" style="margin-bottom:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l1 2h3a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1h3l1-2z"/><path d="M8 11l2 2 5-5M8 17h8"/></svg>Tindakan yang Disarankan</div><ol class="result-actions-list">${info.actions.map(x=>`<li>${x}</li>`).join("")}</ol></div>`;
     }
   }
 
@@ -742,16 +757,15 @@
     }
 
     const conf = Number.isFinite(Number(representative.confidence)) ? ` (${Math.round(Number(representative.confidence))}% keyakinan CNN)` : "";
-    const source = representative.sourceRecording ? ` Sampel berasal dari rekaman ICBHI ${representative.sourceRecording}.` : "";
     let finding;
     if(representative.result === "crackle") {
-      finding = `CNN mengenali crackle pada ${representative.name}${conf}. Area merah–oranye adalah Grad-CAM nyata dari layer konvolusi terakhir dan menandai rentang waktu yang paling berkontribusi terhadap kelas crackle.`;
+      finding = `2D CNN mengenali crackle pada ${representative.name}${conf}. Area merah–oranye adalah Grad-CAM nyata dari layer konvolusi terakhir dan menandai rentang waktu yang paling berkontribusi terhadap kelas crackle.`;
     } else if(representative.result === "wheeze") {
-      finding = `CNN mengenali wheeze pada ${representative.name}${conf}. Area merah–oranye adalah Grad-CAM nyata dari layer konvolusi terakhir dan menandai rentang waktu yang paling berkontribusi terhadap kelas wheeze.`;
+      finding = `2D CNN mengenali wheeze pada ${representative.name}${conf}. Area merah–oranye adalah Grad-CAM nyata dari layer konvolusi terakhir dan menandai rentang waktu yang paling berkontribusi terhadap kelas wheeze.`;
     } else {
-      finding = `CNN mengklasifikasikan ${representative.name} sebagai suara paru normal${conf}. Area merah–oranye menunjukkan rentang waktu yang paling berkontribusi terhadap keputusan kelas normal.`;
+      finding = `2D CNN mengklasifikasikan ${representative.name} sebagai suara paru normal${conf}. Area merah–oranye menunjukkan rentang waktu yang paling berkontribusi terhadap keputusan kelas normal.`;
     }
-    $("#aiConclusionText").textContent = finding + source;
+    $("#aiConclusionText").textContent = finding;
   }
 
   function drawSpectrogram(tier, crackleCount){

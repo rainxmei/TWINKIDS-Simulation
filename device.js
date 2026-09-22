@@ -12,7 +12,10 @@
     "Posterior Atas Kiri","Posterior Atas Kanan","Posterior Bawah Kiri",
     "Posterior Bawah Kanan","Anterior Atas Kiri","Anterior Atas Kanan"
   ];
-  const REC_SECONDS = 9;         // durasi rekam per titik
+  const REC_SECONDS = 9;         // durasi yang ditampilkan per titik
+  const REC_REAL_MS = 3000;      // dipercepat: 9 detik tampil dalam 3 detik nyata
+  const MAX_SECONDS = 60;        // durasi yang ditampilkan untuk fingerclip
+  const MAX_REAL_MS = 6000;      // dipercepat: 60 detik tampil dalam 6 detik nyata
   const BAD_SIGNAL_CHANCE = 0.16; // peluang kualitas sinyal rendah per rekaman
   const RESULT_COLORS = { crackle:"#D9364A", wheeze:"#C98A00", normal:"#00A3AE" };
   const RESULT_LABELS = { crackle:"CRACKLE", wheeze:"WHEEZE", normal:"NORMAL" };
@@ -31,6 +34,7 @@
     audioEl: null,
     maxState: "idle", // idle | prompt | measuring | done
     maxTimer: null,
+    maxElapsed: 0,
     spo2: null,
     hr: null,
   };
@@ -151,7 +155,7 @@
         <div class="dlcd-gate">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
           <b>Menunggu Perangkat</b>
-          <span>Isi data pasien, suhu, dan kondisi klinis terlebih dahulu. Alat aktif saat halaman auskultasi dimulai</span>
+          <span>Isi data terlebih dahulu pada “Mulai Sekarang”, lalu “Mulai Auskultasi” untuk mengaktifkan alat ini.</span>
         </div>`;
       return;
     }
@@ -163,21 +167,24 @@
           <div class="dlcd-max-wrap">
             <div class="dlcd-max-icon">☝</div>
             <b>Tempelkan Jari</b>
-            <span>Tempelkan jari telunjuk pada oksimeter.</span>
-            <small>${currentRR() !== null ? `RR terdeteksi: ${currentRR()} x/menit` : ""}</small>
+            <span>Tempelkan jari telunjuk pada fingerclip.</span>
             <em>Tekan PILIH setelah jari terpasang.</em>
           </div>`;
         return;
       }
       if(D.maxState === "measuring"){
+        const maxProgress = Math.min(1, D.maxElapsed / MAX_REAL_MS);
+        const maxRemaining = Math.max(0, Math.ceil(MAX_SECONDS * (1 - maxProgress)));
         el.innerHTML = `
           <div class="dlcd-header"><b>Twinkids</b>${battWifi()}</div>
           <div class="dlcd-max-wrap">
             <div class="dlcd-max-pulse">♥</div>
             <b>MENGUKUR...</b>
-            <span>Pertahankan jari tetap diam pada sensor.</span>
-            <small>${currentRR() !== null ? `RR: ${currentRR()} x/menit` : ""}</small>
-            <div class="dlcd-max-progress"><i></i></div>
+            <span>Pertahankan jari tetap diam pada fingerclip.</span>
+            <div class="dlcd-bar-row dlcd-max-timer-row">
+              <div class="dlcd-bar"><div class="dlcd-bar-fill" style="width:${maxProgress*100}%"></div></div>
+              <b>${maxRemaining} detik</b>
+            </div>
           </div>`;
         return;
       }
@@ -211,7 +218,7 @@
     let resultHTML;
     const res = D.results[D.cursor];
     if(allDone){
-      resultHTML = `<b style="color:#00A3AE; font-size:11px;">✓ SELESAI</b><span>Lanjut pengukuran sensor</span>`;
+      resultHTML = `<b style="color:#00A3AE; font-size:11px;">✓ SELESAI</b><span>Lanjut pengukuran fingerclip</span>`;
     } else if(D.state === "recording"){
       resultHTML = `<b style="color:#3A423F;">MEREKAM…</b><span>Jangan gerakkan stetoskop</span>`;
     } else if(D.state === "badsignal"){
@@ -299,11 +306,11 @@
     D.recElapsed = 0;
     playSampleAudio(D.activeSample);
     render();
-    emit("antarakala:point-start", { index: D.cursor, name: POINT_NAMES[D.cursor], duration: REC_SECONDS, sampleId:D.activeSample && D.activeSample.id });
+    emit("antarakala:point-start", { index: D.cursor, name: POINT_NAMES[D.cursor], duration: REC_SECONDS, realDurationMs: REC_REAL_MS, sampleId:D.activeSample && D.activeSample.id });
 
     clearInterval(D.recTimer);
     D.recTimer = setInterval(()=>{
-      D.recElapsed += 0.1;
+      D.recElapsed += REC_SECONDS * 100 / REC_REAL_MS;
       if(D.recElapsed >= REC_SECONDS){
         clearInterval(D.recTimer);
         finishRecording();
@@ -361,13 +368,24 @@
   function startMaxMeasurement(){
     if(D.maxState !== "prompt") return;
     D.maxState = "measuring";
+    D.maxElapsed = 0;
     render();
     emit("antarakala:max-start", {});
-    clearTimeout(D.maxTimer);
-    D.maxTimer = setTimeout(finishMaxMeasurement, 3200);
+    clearInterval(D.maxTimer);
+    D.maxTimer = setInterval(()=>{
+      D.maxElapsed += 100;
+      if(D.maxElapsed >= MAX_REAL_MS){
+        finishMaxMeasurement();
+        return;
+      }
+      render();
+    }, 100);
   }
 
   function finishMaxMeasurement(){
+    clearInterval(D.maxTimer);
+    D.maxTimer = null;
+    D.maxElapsed = MAX_REAL_MS;
     const r = Math.random();
     D.spo2 = r < 0.10 ? Math.floor(88 + Math.random()*2) : r < 0.35 ? Math.floor(90 + Math.random()*5) : Math.floor(95 + Math.random()*5);
     D.hr = Math.floor(92 + Math.random()*40);
@@ -608,8 +626,9 @@
       D.probeDockedPoint = null;
       D.activeSample = null;
       D.usedSampleIds = [];
-      clearTimeout(D.maxTimer);
+      clearInterval(D.maxTimer);
       D.maxTimer = null;
+      D.maxElapsed = 0;
       D.maxState = "idle";
       D.spo2 = null;
       D.hr = null;
